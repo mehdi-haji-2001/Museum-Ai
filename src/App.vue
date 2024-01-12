@@ -4,20 +4,18 @@ import { RouterView } from 'vue-router'
 
 <template>
   <main>
-    <div>
-      <RouterView />
-    </div>
+    <RouterView />
   </main>
 </template>
 
-<style scoped>
-main {
+<style>
+#app {
   height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
 }
-main > div {
+#app > main {
   width: 100%;
   height: 100%;
   max-width: 560px;

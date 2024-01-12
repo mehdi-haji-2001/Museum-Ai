@@ -1,66 +1,50 @@
+<script setup lang="ts">
+defineProps({
+  scale: {
+    type: Number,
+    default: 1
+  }
+})
+</script>
+
 <template>
-  <div class="flex gap-0.5">
-    <div class="bars">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </div>
-    <div class="bars">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </div>
-    <div class="bars">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </div>
+  <div id="bars">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
   </div>
 </template>
 
 <style scoped>
-.bars {
+#bars {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2px;
+  gap: calc(2px * v-bind(scale));
+  height: calc(24px * v-bind(scale));
 }
 
 .bar {
   background: black;
-  height: 2px;
-  width: 2px;
+  height: calc(2px * v-bind(scale));
+  width: calc(2px * v-bind(scale));
   border-radius: 5px;
   animation: sound 0s -6s linear infinite alternate;
 }
 
 @keyframes sound {
   0% {
-    height: 2px;
+    height: calc(2px * v-bind(scale));
   }
   100% {
-    height: 24px;
+    height: 100%;
   }
 }
 

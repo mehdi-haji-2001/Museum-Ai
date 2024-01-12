@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export interface Voice {
@@ -16,6 +16,12 @@ export interface Duration {
 export interface GroupSize {
   active: boolean
   size: 1 | 2 | 3 | 4
+}
+
+export enum LikeStatus {
+  liked = 'liked',
+  disliked = 'disliked',
+  neutral = 'neutral'
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -83,8 +89,25 @@ export const useSettingsStore = defineStore('settings', () => {
   const isRecording = ref(false)
   const isPlaying = ref(false)
   const isLoading = ref(false)
+  const likeStatus = ref<LikeStatus>()
+  const isLiked = computed(() => likeStatus.value === LikeStatus.liked)
+  const isDisliked = computed(() => likeStatus.value === LikeStatus.disliked)
 
+  function toggleLikeStatus(status?: LikeStatus) {
+    if (status) {
+      likeStatus.value = likeStatus.value === status ? LikeStatus.neutral : status
+    } else {
+      likeStatus.value = LikeStatus.neutral
+    }
+  }
   function toggleRecording(active?: boolean) {
+    if (isRecording.value) {
+      toggleLoading(true)
+      setTimeout(() => {
+        toggleLoading(false)
+        togglePlaying(true)
+      }, 3000)
+    }
     isRecording.value = active ?? !isRecording.value
   }
   function togglePlaying(active?: boolean) {
@@ -124,6 +147,9 @@ export const useSettingsStore = defineStore('settings', () => {
     isPlaying,
     togglePlaying,
     isLoading,
-    toggleLoading
+    toggleLoading,
+    toggleLikeStatus,
+    isLiked,
+    isDisliked
   }
 })
