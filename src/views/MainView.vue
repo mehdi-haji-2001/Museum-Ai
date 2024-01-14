@@ -20,11 +20,11 @@ const store = useSettingsStore()
         <span class="text-center text-4xl font-bold leading-10">
           {{ store.isLoading ? 'Loading' : 'Listening' }}...
         </span>
-        <div class="flex gap-0.5" v-if="store.isRecording">
+        <!-- <div class="flex gap-0.5" v-if="store.isRecording">
           <VoiceAnimation />
           <VoiceAnimation />
           <VoiceAnimation />
-        </div>
+        </div> -->
       </div>
       <span class="p-4 border-2 rounded-3xl mt-4 text-center">
         Why are there electrical coils in the setup of the artifact 4?
