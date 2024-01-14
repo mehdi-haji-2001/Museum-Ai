@@ -2,9 +2,11 @@ import { ref, watch } from 'vue'
 import { useSettingsStore } from '../stores/settings'
 import { computed } from 'vue'
 import OpenAI from 'openai'
+import { useReportStore } from '@/stores/report'
 
 export function useVoice() {
   const store = useSettingsStore()
+  const report = useReportStore()
 
   const userQuery = ref('Please hold down the button to record your question.')
 
@@ -56,18 +58,24 @@ export function useVoice() {
   const botResponse = ref('')
 
   const produceResponse = async () => {
-    botResponse.value = 'Thinking...'
-    const responseStream = await gpt_bot.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: produceAPIMessage() }],
-      stream: true
-    })
-    botResponse.value = ''
-    // TODO: Test if this plays chunk by chunk as generated, or if we should play the whole audio at once.
-    for await (const responsePiece of responseStream) {
-      const rp = responsePiece.choices[0]?.delta?.content || ''
-      botResponse.value += rp
-      playResponse(rp)
+    try {
+      botResponse.value = 'Thinking...'
+      const responseStream = await gpt_bot.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: produceAPIMessage() }],
+        stream: true
+      })
+      botResponse.value = ''
+      // TODO: Test if this plays chunk by chunk as generated, or if we should play the whole audio at once.
+      for await (const responsePiece of responseStream) {
+        const rp = responsePiece.choices[0]?.delta?.content || ''
+        botResponse.value += rp
+        playResponse(rp)
+      }
+      report.incrementTQ(true)
+    } catch (error) {
+      report.incrementTQ(false)
+      console.log('Error: ' + error)
     }
   }
 
@@ -100,7 +108,13 @@ export function useVoice() {
     (newValue: boolean, oldValue: boolean) => {
       console.log('Playing changed from ' + oldValue + ' to ' + newValue)
       if (oldValue == false && newValue == true && validQuestion.value) {
+        report.incrementTVQ()
+        report.updateAQWC(wordCount(userQuery.value))
         produceResponse()
+      } else if (oldValue == false && newValue == true && !validQuestion.value) {
+        report.incrementTIQ()
+        report.updateAQWC(wordCount(userQuery.value))
+        botResponse.value = 'Please ensure that you ask a valid question.'
       }
     }
   )
@@ -124,6 +138,6 @@ export function useVoice() {
   return {
     userQuery,
     botResponse,
-    reset
+    resetUserQuery
   }
 }
