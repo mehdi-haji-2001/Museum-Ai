@@ -8,11 +8,13 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
+    "deploy:dev": "npm run build && firebase deploy --only hosting",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "firebase": "^10.7.1",
     "pinia": "^2.1.7",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"
