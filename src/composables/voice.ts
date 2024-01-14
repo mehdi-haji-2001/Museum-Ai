@@ -49,7 +49,7 @@ export function useVoice() {
   }
 
   const gpt_bot = new OpenAI({
-    apiKey: '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',
+    apiKey: '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',
     dangerouslyAllowBrowser: true
   })
 
@@ -86,7 +86,7 @@ export function useVoice() {
     (newValue: boolean, oldValue: boolean) => {
       console.log('Recording changed from ' + oldValue + ' to ' + newValue)
       if (oldValue == false && newValue == true) {
-        userQuery.value = `${defaultStatements[0]}`
+        resetUserQuery()
         speechBot.start()
       } else if (oldValue == true && newValue == false) {
         speechBot.stop()
@@ -101,8 +101,6 @@ export function useVoice() {
       console.log('Playing changed from ' + oldValue + ' to ' + newValue)
       if (oldValue == false && newValue == true && validQuestion.value) {
         produceResponse()
-      } else if (oldValue == false && newValue == true && !validQuestion.value) {
-        playResponse('Please record a valid question first.')
       }
     }
   )
@@ -119,8 +117,13 @@ export function useVoice() {
     return text.split(' ').length
   }
 
+  const resetUserQuery = () => {
+    userQuery.value = defaultStatements[0]
+  }
+
   return {
     userQuery,
-    botResponse
+    botResponse,
+    resetUserQuery
   }
 }

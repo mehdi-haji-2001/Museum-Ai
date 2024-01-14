@@ -8,7 +8,7 @@ import IconStop from '@/components/icons/IconStop.vue'
 import { useVoice } from '@/composables/voice'
 
 const store = useSettingsStore()
-const { userQuery, botResponse } = useVoice()
+const { userQuery, botResponse, resetUserQuery } = useVoice()
 
 // TODO: Watcher for change in UserQuery in View to stream text to textbox.
 </script>
