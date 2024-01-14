@@ -23,14 +23,5 @@
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
-    <script type="application/javascript">
-      window.addEventListener('visibilitychange', function () {
-        console.log('Visibility changed')
-        if (document.visibilityState === 'visible') {
-          console.log('APP resumed')
-          window.location.reload()
-        }
-      })
-    </script>
   </body>
 </html>

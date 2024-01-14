@@ -14,8 +14,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "openai": "^4.0.0",
+    "@vueuse/core": "^10.7.2",
     "firebase": "^10.7.1",
+    "openai": "^4.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"

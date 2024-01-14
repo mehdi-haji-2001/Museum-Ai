@@ -24,6 +24,14 @@ export enum LikeStatus {
   neutral = 'neutral'
 }
 
+export enum Step {
+  initial = 'initial',
+  recording = 'recording',
+  editing = 'editing',
+  loading = 'loading',
+  playing = 'playing'
+}
+
 // TODO: Voices should be made with new SpeechSynthesisVoice() or speechSynthesis.getVoices()
 export const useSettingsStore = defineStore('settings', () => {
   const voices = ref<Voice[]>([
@@ -87,13 +95,22 @@ export const useSettingsStore = defineStore('settings', () => {
       size: 4
     }
   ])
-  const isRecording = ref(false)
-  const isPlaying = ref(false)
-  const isLoading = ref(false)
+  const step = ref<Step>(Step.initial)
+  const isRecording = computed(() => step.value === Step.recording)
+  const isPlaying = computed(() => step.value === Step.playing)
+  const isLoading = computed(() => step.value === Step.loading)
   const likeStatus = ref<LikeStatus>()
   const isLiked = computed(() => likeStatus.value === LikeStatus.liked)
   const isDisliked = computed(() => likeStatus.value === LikeStatus.disliked)
 
+  function setStep(newStep: Step) {
+    step.value = newStep
+    if (newStep === Step.loading) {
+      setTimeout(() => {
+        step.value = Step.playing
+      }, 3000)
+    }
+  }
   function toggleLikeStatus(status?: LikeStatus) {
     if (status) {
       likeStatus.value = likeStatus.value === status ? LikeStatus.neutral : status
@@ -101,22 +118,19 @@ export const useSettingsStore = defineStore('settings', () => {
       likeStatus.value = LikeStatus.neutral
     }
   }
-  function toggleRecording(active?: boolean) {
-    if (isRecording.value) {
-      toggleLoading(true)
-      setTimeout(() => {
-        toggleLoading(false)
-        togglePlaying(true)
-      }, 3000)
-    }
-    isRecording.value = active ?? !isRecording.value
-  }
-  function togglePlaying(active?: boolean) {
-    isPlaying.value = active ?? !isPlaying.value
-  }
-  function toggleLoading(active?: boolean) {
-    isLoading.value = active ?? !isLoading.value
-  }
+  // function toggleRecording(active?: boolean) {
+  //   if (isRecording.value) {
+
+  //   }
+  //   isRecording.value = active ?? !isRecording.value
+  //   if (isRecording.value) setStep(Step.recording)
+  // }
+  // function togglePlaying(active?: boolean) {
+  //   isPlaying.value = active ?? !isPlaying.value
+  // }
+  // function toggleLoading(active?: boolean) {
+  //   isLoading.value = active ?? !isLoading.value
+  // }
   function setVoice(voice: Voice) {
     voices.value = voices.value.map((v) => {
       v.active = v.name === voice.name
@@ -144,13 +158,15 @@ export const useSettingsStore = defineStore('settings', () => {
     groupSizes,
     setGroupSize,
     isRecording,
-    toggleRecording,
+    // toggleRecording,
     isPlaying,
-    togglePlaying,
+    // togglePlaying,
     isLoading,
-    toggleLoading,
+    // toggleLoading,
     toggleLikeStatus,
     isLiked,
-    isDisliked
+    isDisliked,
+    step,
+    setStep
   }
 })
