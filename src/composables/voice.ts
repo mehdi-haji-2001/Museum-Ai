@@ -124,6 +124,6 @@ export function useVoice() {
   return {
     userQuery,
     botResponse,
-    resetUserQuery
+    reset
   }
 }
