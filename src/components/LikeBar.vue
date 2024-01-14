@@ -4,6 +4,8 @@ import IconDislike from '@/components/icons/IconDislike.vue'
 import { useSettingsStore, LikeStatus } from '@/stores/settings'
 
 const store = useSettingsStore()
+
+//
 </script>
 
 <template>
