@@ -24,6 +24,7 @@ export enum LikeStatus {
   neutral = 'neutral'
 }
 
+// TODO: Voices should be made with new SpeechSynthesisVoice() or speechSynthesis.getVoices()
 export const useSettingsStore = defineStore('settings', () => {
   const voices = ref<Voice[]>([
     {

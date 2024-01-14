@@ -5,8 +5,12 @@ import { useSettingsStore } from '@/stores/settings'
 import VoiceAnimation from '@/components/VoiceAnimation.vue'
 import LikeBar from '@/components/LikeBar.vue'
 import IconStop from '@/components/icons/IconStop.vue'
+import { useVoice } from '@/composables/voice'
 
 const store = useSettingsStore()
+const { userQuery, botResponse, resetUserQuery } = useVoice()
+
+// TODO: Watcher for change in UserQuery in View to stream text to textbox.
 </script>
 
 <template>
@@ -26,20 +30,13 @@ const store = useSettingsStore()
           <VoiceAnimation />
         </div> -->
       </div>
-      <span class="p-4 border-2 rounded-3xl mt-4 text-center">
-        Why are there electrical coils in the setup of the artifact 4?
-      </span>
+      <span class="p-4 border-2 rounded-3xl mt-4 text-center"> {{ userQuery }} </span>
     </template>
     <template v-else-if="store.isPlaying">
       <div class="flex flex-col items-center">
         <VoiceAnimation class="mt-10" :scale="3" />
         <span class="p-4 border-2 rounded-3xl mt-4 text-center max-h-32 overflow-y-scroll">
-          The electrical coils surrounding Artifact 4 are an integral part of its mysterious design,
-          harnessing the elemental energies that pulse through the cosmos. Legends suggest these
-          coils act as conduits, channeling a harmonious symphony of fire, water, earth, and air
-          into the artifact's core, imbuing it with a cosmic resonance. The purpose behind this
-          celestial dance remains an enigma, leaving room for speculation about the artifact's role
-          in the greater cosmic narrative.
+          {{ botResponse }}
         </span>
         <LikeBar class="mt-4" />
         <div class="bg-green-500 rounded-full p-7 mt-8" @click="store.togglePlaying()">
