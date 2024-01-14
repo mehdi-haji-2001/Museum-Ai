@@ -10,8 +10,8 @@ const store = useSettingsStore()
 </script>
 
 <template>
-  <div class="flex flex-col h-full px-6 py-12">
-    <RouterLink to="/settings" class="text-2xl font-bold ml-4 self-start">Setting</RouterLink>
+  <div class="flex flex-col h-full p-6">
+    <RouterLink to="/settings" class="text-2xl font-bold self-start">Setting</RouterLink>
     <div class="pt-10">
       <TheSlogan />
     </div>
@@ -47,6 +47,6 @@ const store = useSettingsStore()
         </div>
       </div>
     </template>
-    <TheMic v-if="!store.isLoading && !store.isPlaying" />
+    <TheMic v-if="!store.isLoading && !store.isPlaying" class="mb-6" />
   </div>
 </template>

@@ -14,11 +14,11 @@
       "type": "image/png"
     }
   ],
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
-  "display": "fullscreen",
+  "background_color": "#5900b3",
+  "theme_color": "black",
+  "display": "standalone",
   "orientation": "portrait",
-  "start_url": ".",
+  "start_url": "/",
   "url": "index.html",
   "scope": "."
 }
