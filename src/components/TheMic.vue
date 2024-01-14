@@ -10,7 +10,10 @@ const store = useSettingsStore()
     <div
       class="bg-green-500 rounded-full p-6"
       :class="store.isRecording ? 'scale-150' : ''"
-      @click="store.toggleRecording()"
+      @mousedown="store.toggleRecording(true)"
+      @touchstart="store.toggleRecording(true)"
+      @mouseup="store.toggleRecording(false)"
+      @touchend="store.toggleRecording(false)"
     >
       <IconMic :class="store.isRecording ? 'fill-[#a1e2b1]' : 'fill-white'" />
     </div>
