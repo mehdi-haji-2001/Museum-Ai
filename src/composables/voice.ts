@@ -4,10 +4,13 @@ import { computed } from 'vue'
 import { useSpeechRecognition, useSpeechSynthesis } from '@vueuse/core'
 import { useAI } from './AI'
 import { defineStore } from 'pinia'
+import { useReportStore } from '@/stores/report'
 
 export const useVoice = defineStore('voice', () => {
   const store = useSettingsStore()
   const AI = useAI()
+  const report = useReportStore()
+
   const userQuery = ref('Please hold down the button to record your question.')
   const speakText = ref('')
   const listen = useSpeechRecognition()
@@ -58,6 +61,8 @@ export const useVoice = defineStore('voice', () => {
           store.step = Step.initial
           return
         }
+        report.incrementTVQ()
+        report.updateAQWC(wordCount(userQuery.value))
         AI.produceResponse(userQuery.value).then((res) => {
           playResponse(res)
           store.step = Step.playing
