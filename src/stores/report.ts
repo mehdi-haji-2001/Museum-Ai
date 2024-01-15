@@ -3,19 +3,39 @@ import { ref } from 'vue'
 import type { UserReport } from '../types/UserReport'
 
 export const useReportStore = defineStore('report', () => {
-  const sessionReport = ref<UserReport>({} as UserReport)
+  const sessionReport = ref<UserReport>({
+    TQ: 0,
+    TSQ: 0,
+    TFNQ: 0,
+    TFSQ: 0,
+    TQE: 0,
+    TR: 0,
+    TFMS: 0,
+    TAPR: 0,
+    AQWC: 0,
+    ARS: 0,
+    WC: [],
+    SAT: []
+  })
 
-  const incrementTQ = (success: boolean) => {
-    sessionReport.value.TQ++
-    success ? incrementTSQ() : incrementTFQ()
+  const incrementQ = (success: boolean, network: boolean = false) => {
+    success ? incrementTSQ() : incrementTFQ(network)
   }
 
   const incrementTSQ = () => {
     sessionReport.value.TSQ++
   }
 
-  const incrementTFQ = () => {
-    sessionReport.value.TFQ++
+  const incrementTFQ = (network: boolean) => {
+    network ? incrementTFNQ() : incrementTFSQ()
+  }
+
+  const incrementTFNQ = () => {
+    sessionReport.value.TFNQ++
+  }
+
+  const incrementTFSQ = () => {
+    sessionReport.value.TFSQ++
   }
 
   const incrementTQE = () => {
@@ -32,14 +52,6 @@ export const useReportStore = defineStore('report', () => {
 
   const incrementTAPR = () => {
     sessionReport.value.TAPR++
-  }
-
-  const incrementTVQ = () => {
-    sessionReport.value.TVQ++
-  }
-
-  const incrementTIQ = () => {
-    sessionReport.value.TIQ++
   }
 
   const updateAQWC = (queryWC: number) => {
@@ -61,17 +73,17 @@ export const useReportStore = defineStore('report', () => {
   }
 
   const produceReport = () => {
+    sessionReport.value.TQ =
+      sessionReport.value.TSQ + sessionReport.value.TFNQ + sessionReport.value.TFSQ
     return sessionReport.value
   }
 
   return {
-    incrementTQ,
+    incrementQ,
     incrementTQE,
     incrementTR,
     incrementTFMS,
     incrementTAPR,
-    incrementTVQ,
-    incrementTIQ,
     updateAQWC,
     updateARS,
     produceReport

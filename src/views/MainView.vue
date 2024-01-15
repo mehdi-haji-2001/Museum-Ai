@@ -8,12 +8,35 @@ import LikeBar from '@/components/LikeBar.vue'
 import IconStop from '@/components/icons/IconStop.vue'
 import { useVoice } from '@/composables/voice'
 import { useAI } from '@/composables/AI'
+import { watch } from 'vue'
+import { useReportStore } from '@/stores/report'
 
 const store = useSettingsStore()
+const report = useReportStore()
 const voice = useVoice()
 const AI = useAI()
 
 // TODO: Watcher for change in UserQuery in View to stream text to textbox.
+
+watch(
+  () => store.isSettingsModified,
+  () => {
+    if (store.isSettingsModified) {
+      report.incrementTFMS()
+      store.isSettingsModified = false
+    }
+  }
+)
+
+const endExchange = () => {
+  store.setStep(Step.initial)
+  if (store.isLiked === true && store.isDisliked === false) {
+    report.updateARS(1)
+  } else if (store.isLiked === false && store.isDisliked === true) {
+    report.updateARS(0)
+  }
+  store.toggleLikeStatus()
+}
 </script>
 
 <template>
@@ -50,7 +73,7 @@ const AI = useAI()
           {{ AI.response }}
         </span>
         <LikeBar class="mt-4" />
-        <div class="bg-green-500 rounded-full p-7 mt-8" @click="store.setStep(Step.initial)">
+        <div class="bg-green-500 rounded-full p-7 mt-8" @click="endExchange">
           <IconStop />
         </div>
       </div>

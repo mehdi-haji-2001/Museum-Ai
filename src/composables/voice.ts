@@ -5,6 +5,7 @@ import { useSpeechRecognition, useSpeechSynthesis } from '@vueuse/core'
 import { useAI } from './AI'
 import { defineStore } from 'pinia'
 import { useReportStore } from '@/stores/report'
+import { increment } from 'firebase/database'
 
 export const useVoice = defineStore('voice', () => {
   const store = useSettingsStore()
@@ -12,13 +13,20 @@ export const useVoice = defineStore('voice', () => {
   const report = useReportStore()
 
   const userQuery = ref('Please hold down the button to record your question.')
+  const originalQuery = ref('')
   const speakText = ref('')
   const listen = useSpeechRecognition()
   const speak = useSpeechSynthesis(speakText)
 
   // TODO: Watcher for change of these settings.
 
-  const defaultStatements = ['Please hold down the button to record your question.', 'Thinking']
+  const defaultStatements = [
+    'Please hold down the button to record your question.',
+    'Please ask a valid question.',
+    'Thinking...',
+    'Sorry, your browser does not support text to speech!',
+    'Sorry, I am having trouble connecting to the server, please try again later.'
+  ]
 
   watch(listen.result, (newValue: any) => {
     const transcript = newValue
@@ -32,7 +40,8 @@ export const useVoice = defineStore('voice', () => {
     }
     // TODO: Voice Selection should be from settings store.
     // TODO: Add validation for it the userQuestion is sufficient.
-    speakText.value = `Did you ask ${userQuery.value}`
+    speakText.value = `Did you ask    ${userQuery.value}`
+    originalQuery.value = userQuery.value
     speak.speak()
   }
 
@@ -56,30 +65,37 @@ export const useVoice = defineStore('voice', () => {
         listen.stop()
         playQuestion()
       } else if (oldValue == Step.editing && newValue == Step.loading) {
-        if (!validQuestion.value) {
+        if (userQuery.value != originalQuery.value) {
+          report.incrementTQE()
+        }
+        if (!validQuestion(userQuery.value)) {
           alert('Please ask a valid question.')
+          report.incrementQ(false, false)
+          report.updateAQWC(wordCount(userQuery.value))
           store.step = Step.initial
           return
         }
-        report.incrementTVQ()
         report.updateAQWC(wordCount(userQuery.value))
         AI.produceResponse(userQuery.value).then((res) => {
           playResponse(res)
           store.step = Step.playing
+          console.log(report.produceReport())
         })
       } else if (oldValue == Step.playing && newValue == Step.initial) {
         resetUserQuery()
       }
+      // TODO: Check for the case where it changes from loading --> initial, as it is displaying output even though question was invalid.
     }
   )
 
-  const validQuestion = computed(() => {
+  const validQuestion = (question: string) => {
     return (
-      wordCount(userQuery.value) > 0 &&
-      wordCount(userQuery.value) < 50 &&
-      defaultStatements.every((statement) => !userQuery.value.includes(statement))
+      wordCount(question) > 0 &&
+      wordCount(question) < 50 &&
+      defaultStatements.every((statement: string) => !question.includes(statement)) &&
+      question != ''
     )
-  })
+  }
 
   const wordCount = (text: string) => {
     return text.split(' ').length

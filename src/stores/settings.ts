@@ -102,6 +102,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const likeStatus = ref<LikeStatus>()
   const isLiked = computed(() => likeStatus.value === LikeStatus.liked)
   const isDisliked = computed(() => likeStatus.value === LikeStatus.disliked)
+  const isSettingsModified = ref(false)
 
   function setStep(newStep: Step) {
     step.value = newStep
@@ -132,18 +133,21 @@ export const useSettingsStore = defineStore('settings', () => {
   //   isLoading.value = active ?? !isLoading.value
   // }
   function setVoice(voice: Voice) {
+    isSettingsModified.value = true
     voices.value = voices.value.map((v) => {
       v.active = v.name === voice.name
       return v
     })
   }
   function setDuration(duration: Duration) {
+    isSettingsModified.value = true
     durations.value = durations.value.map((d) => {
       d.active = d.title === duration.title
       return d
     })
   }
   function setGroupSize(groupSize: GroupSize) {
+    isSettingsModified.value = true
     groupSizes.value = groupSizes.value.map((g) => {
       g.active = g.size === groupSize.size
       return g
@@ -167,6 +171,7 @@ export const useSettingsStore = defineStore('settings', () => {
     isLiked,
     isDisliked,
     step,
-    setStep
+    setStep,
+    isSettingsModified
   }
 })
