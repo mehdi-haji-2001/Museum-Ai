@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { watch } from 'vue'
 
 export interface Voice {
   name: 'Julia' | 'Alex' | 'Anna' | 'David'
@@ -36,42 +37,63 @@ export enum Step {
 // TODO: Voices should be made with new SpeechSynthesisVoice() or speechSynthesis.getVoices()
 export const useSettingsStore = defineStore('settings', () => {
   const playbackVoices = ref<SpeechSynthesisVoice[]>([])
+
+  // When voices are loaded into the browser, we collect them.
+  window.speechSynthesis.onvoiceschanged = () => {
+    const voices = window.speechSynthesis.getVoices()
+    playbackVoices.value = voices
+  }
+
+  watch(playbackVoices, (newVoices: SpeechSynthesisVoice[]) => {
+    voices.value.forEach((voice) => {
+      configureVoiceAssistants(voice, newVoices)
+    })
+  })
+
+  const configureVoiceAssistants = (voice: Voice, newVoices: SpeechSynthesisVoice[]) => {
+    let v = null
+    if (voice.name === 'Julia') {
+      v = newVoices.find(
+        (voice: any) => voice.name === 'Microsoft Hazel - English (United Kingdom)'
+      )
+    } else if (voice.name === 'Alex') {
+      v = newVoices.find((voice: any) => voice.name === 'Microsoft David - English (United States)')
+    } else if (voice.name === 'Anna') {
+      v = newVoices.find((voice: any) => voice.name === 'Microsoft Zira - English (United States)')
+    } else {
+      v = newVoices.find((voice: any) => voice.name === 'Microsoft Mark - English (United States)')
+    }
+    voice.voice = v
+  }
+
   const voices = ref<Voice[]>([
     {
       name: 'Julia',
       active: true,
       image:
         'https://cdn.builder.io/api/v1/image/assets/TEMP/9422fc76432fd1e0b6c5fe66e55f1e26b389f433de6d6395668f1809fc90938f',
-      voice: playbackVoices.value.find(
-        (voice) => voice.name === 'Microsoft Sonia Online (Natural) - English (United Kingdom)'
-      )
+      voice: undefined
     },
     {
       name: 'Alex',
       active: false,
       image:
         'https://cdn.builder.io/api/v1/image/assets/TEMP/53078945d32f8debb00124f30e994d230cbb26d7305b8221923ee1bb7cda7d70',
-      voice: playbackVoices.value.find(
-        (voice) => voice.name === 'Microsoft Eric Online (Natural) - English (United States)'
-      )
+      voice: undefined
     },
     {
       name: 'Anna',
       active: false,
       image:
         'https://cdn.builder.io/api/v1/image/assets/TEMP/9cd200aa6f9fa0bd3a96e55345e38d6655c393d069876c56a9878f790b162764',
-      voice: playbackVoices.value.find(
-        (voice) => voice.name === 'Microsoft Michelle Online (Natural) - English (United States)'
-      )
+      voice: undefined
     },
     {
       name: 'David',
       active: false,
       image:
         'https://cdn.builder.io/api/v1/image/assets/TEMP/d9dcf5439a49a815f01d05295b4c89f37b35132b479b771a9b94e8c93a6190c3',
-      voice: playbackVoices.value.find(
-        (voice) => voice.name === 'Microsoft Roger Online (Natural) - English (United States)'
-      )
+      voice: undefined
     }
   ])
   const durations = ref<Duration[]>([

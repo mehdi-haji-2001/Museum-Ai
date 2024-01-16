@@ -18,11 +18,18 @@ export const useVoice = defineStore('voice', () => {
   const listen = useSpeechRecognition()
 
   const selectedVoice = computed(() => {
-    console.log(store.voices)
     return store.voices.find((voice) => voice.active)
   })
 
-  const speak = useSpeechSynthesis(speakText, { voice: selectedVoice?.value?.voice })
+  /**
+   * Seeing as a SpeechSynthesisVoice is not a reactive object, we cannot directly pass the result of selectedVoice into { voice: selectedVoice.value.voice }.
+   * Instead, the computation of the voice (which voice is active) must be done on a layer higher than assignment to useSpeechSynthesis, whose second property is:
+   * UseSpeechSynthesisOptions
+   */
+  const voiceConfig = computed(() => {
+    const selected = selectedVoice.value
+    return selected ? { voice: selected.voice } : undefined
+  })
 
   const defaultStatements = [
     'Please hold down the button to record your question.',
@@ -38,6 +45,7 @@ export const useVoice = defineStore('voice', () => {
   })
 
   const playQuestion = () => {
+    const speak = useSpeechSynthesis(speakText, voiceConfig.value)
     if (!speak.isSupported) {
       alert('Sorry, your browser does not support text to speech!')
       return
@@ -45,9 +53,12 @@ export const useVoice = defineStore('voice', () => {
     speakText.value = `Did you ask    ${userQuery.value}`
     originalQuery.value = userQuery.value
     speak.speak()
+    console.log(store.voices)
+    console.log(speak)
   }
 
   const playResponse = (playback: string) => {
+    const speak = useSpeechSynthesis(speakText, voiceConfig.value)
     if (!speak.isSupported) {
       alert('Sorry, your browser does not support text to speech!')
       return
