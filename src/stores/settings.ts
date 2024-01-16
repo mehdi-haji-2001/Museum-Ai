@@ -5,6 +5,7 @@ export interface Voice {
   name: 'Julia' | 'Alex' | 'Anna' | 'David'
   active: boolean
   image?: string
+  voice?: SpeechSynthesisVoice
 }
 
 export interface Duration {
@@ -34,30 +35,43 @@ export enum Step {
 
 // TODO: Voices should be made with new SpeechSynthesisVoice() or speechSynthesis.getVoices()
 export const useSettingsStore = defineStore('settings', () => {
+  const playbackVoices = ref<SpeechSynthesisVoice[]>([])
   const voices = ref<Voice[]>([
     {
       name: 'Julia',
       active: true,
       image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/9422fc76432fd1e0b6c5fe66e55f1e26b389f433de6d6395668f1809fc90938f'
+        'https://cdn.builder.io/api/v1/image/assets/TEMP/9422fc76432fd1e0b6c5fe66e55f1e26b389f433de6d6395668f1809fc90938f',
+      voice: playbackVoices.value.find(
+        (voice) => voice.name === 'Microsoft Sonia Online (Natural) - English (United Kingdom)'
+      )
     },
     {
       name: 'Alex',
       active: false,
       image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/53078945d32f8debb00124f30e994d230cbb26d7305b8221923ee1bb7cda7d70'
+        'https://cdn.builder.io/api/v1/image/assets/TEMP/53078945d32f8debb00124f30e994d230cbb26d7305b8221923ee1bb7cda7d70',
+      voice: playbackVoices.value.find(
+        (voice) => voice.name === 'Microsoft Eric Online (Natural) - English (United States)'
+      )
     },
     {
       name: 'Anna',
       active: false,
       image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/9cd200aa6f9fa0bd3a96e55345e38d6655c393d069876c56a9878f790b162764'
+        'https://cdn.builder.io/api/v1/image/assets/TEMP/9cd200aa6f9fa0bd3a96e55345e38d6655c393d069876c56a9878f790b162764',
+      voice: playbackVoices.value.find(
+        (voice) => voice.name === 'Microsoft Michelle Online (Natural) - English (United States)'
+      )
     },
     {
       name: 'David',
       active: false,
       image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/d9dcf5439a49a815f01d05295b4c89f37b35132b479b771a9b94e8c93a6190c3'
+        'https://cdn.builder.io/api/v1/image/assets/TEMP/d9dcf5439a49a815f01d05295b4c89f37b35132b479b771a9b94e8c93a6190c3',
+      voice: playbackVoices.value.find(
+        (voice) => voice.name === 'Microsoft Roger Online (Natural) - English (United States)'
+      )
     }
   ])
   const durations = ref<Duration[]>([

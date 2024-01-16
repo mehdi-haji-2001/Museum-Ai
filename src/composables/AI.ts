@@ -10,7 +10,7 @@ export const useAI = defineStore('AI', () => {
   const response = ref('')
 
   const openAI = new OpenAI({
-    apiKey: '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',
+    apiKey: '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',
     dangerouslyAllowBrowser: true
   })
 
@@ -34,7 +34,8 @@ export const useAI = defineStore('AI', () => {
     //     }
     //     report.incrementQ(true)
     //     return response.value
-    //   }).catch((err) => {
+    //   })
+    //   .catch((err) => {
     //     console.error(err)
     //     report.incrementQ(false, true)
     //     return 'Sorry, I am having trouble connecting to the server, please try again later.'

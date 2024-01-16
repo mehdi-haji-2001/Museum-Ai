@@ -16,9 +16,13 @@ export const useVoice = defineStore('voice', () => {
   const originalQuery = ref('')
   const speakText = ref('')
   const listen = useSpeechRecognition()
-  const speak = useSpeechSynthesis(speakText)
 
-  // TODO: Watcher for change of these settings.
+  const selectedVoice = computed(() => {
+    console.log(store.voices)
+    return store.voices.find((voice) => voice.active)
+  })
+
+  const speak = useSpeechSynthesis(speakText, { voice: selectedVoice?.value?.voice })
 
   const defaultStatements = [
     'Please hold down the button to record your question.',
@@ -38,8 +42,6 @@ export const useVoice = defineStore('voice', () => {
       alert('Sorry, your browser does not support text to speech!')
       return
     }
-    // TODO: Voice Selection should be from settings store.
-    // TODO: Add validation for it the userQuestion is sufficient.
     speakText.value = `Did you ask    ${userQuery.value}`
     originalQuery.value = userQuery.value
     speak.speak()
