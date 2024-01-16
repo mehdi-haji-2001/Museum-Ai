@@ -5,7 +5,6 @@ import { useSpeechRecognition, useSpeechSynthesis } from '@vueuse/core'
 import { useAI } from './AI'
 import { defineStore } from 'pinia'
 import { useReportStore } from '@/stores/report'
-import { increment } from 'firebase/database'
 
 export const useVoice = defineStore('voice', () => {
   const store = useSettingsStore()

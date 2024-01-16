@@ -41,6 +41,12 @@ export const useAI = defineStore('AI', () => {
     //     return 'Sorry, I am having trouble connecting to the server, please try again later.'
     //   })
 
+    const message = await openAI.beta.threads.messages.create('thread_pFc6IpL2sOvVxnxDcJWUfGrc', {
+      role: 'user',
+      content: question
+    })
+    console.log(message)
+
     // For testing purposes
     report.incrementQ(true)
     response.value = 'This is a generic response.\n Your question was: ' + question
