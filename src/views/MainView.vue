@@ -6,6 +6,7 @@ import { useSettingsStore, Step } from '@/stores/settings'
 import VoiceAnimation from '@/components/VoiceAnimation.vue'
 import LikeBar from '@/components/LikeBar.vue'
 import IconStop from '@/components/icons/IconStop.vue'
+import IconCopy from '@/components/icons/IconCopy.vue'
 import { useVoice } from '@/composables/voice'
 import { useAI } from '@/composables/AI'
 import { watch } from 'vue'
@@ -36,6 +37,12 @@ const endExchange = () => {
     report.updateARS(0)
   }
   store.toggleLikeStatus()
+}
+
+const copy = () => {
+  navigator.clipboard
+    .writeText(`${voice.userQuery}\n${AI.response}`)
+    .then(() => alert('Copied to clipboard!'))
 }
 </script>
 
@@ -69,6 +76,9 @@ const endExchange = () => {
     <template v-else-if="store.step === Step.playing">
       <div class="flex flex-col items-center">
         <VoiceAnimation class="mt-10" :scale="3" />
+        <div class="mx-4 my-4" @click="copy()">
+          <IconCopy />
+        </div>
         <span class="p-4 border-2 rounded-3xl mt-4 text-center max-h-32 overflow-y-scroll">
           {{ AI.response }}
         </span>
