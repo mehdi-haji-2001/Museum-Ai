@@ -10,7 +10,7 @@ export const useAI = defineStore('AI', () => {
   const response = ref('')
 
   const openAI = new OpenAI({
-    apiKey: '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',
+    apiKey: import.meta.env.VITE_GPT as string,
     dangerouslyAllowBrowser: true
   })
 
