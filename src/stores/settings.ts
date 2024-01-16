@@ -39,35 +39,36 @@ export const useSettingsStore = defineStore('settings', () => {
 
   // When voices are loaded into the browser, we collect them.
   window.speechSynthesis.onvoiceschanged = () => {
-    const _voices = window.speechSynthesis.getVoices().filter((v) => v.lang === 'en-US')
-    for (let i = 0; i < voices.value.length; i++) {
-      voices.value[i].voice = _voices[i]
-    }
-    voices.value = voices.value.filter((v) => v.voice !== undefined)
-    voices.value[0].active = true
+    const _voices = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith('en'))
+    const female = _voices.filter((v) => v.name.includes('Female'))[0] || undefined
+    const male = _voices.filter((v) => v.name.includes('Male'))[0] || undefined
+    voices.value[0].voice = female
+    voices.value[1].voice = male
   }
 
   const voices = ref<Voice[]>([
     {
+      active: true,
       name: 'Julia',
       image:
         'https://cdn.builder.io/api/v1/image/assets/TEMP/9422fc76432fd1e0b6c5fe66e55f1e26b389f433de6d6395668f1809fc90938f'
     },
     {
+      active: false,
       name: 'Alex',
       image:
         'https://cdn.builder.io/api/v1/image/assets/TEMP/53078945d32f8debb00124f30e994d230cbb26d7305b8221923ee1bb7cda7d70'
-    },
-    {
-      name: 'Anna',
-      image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/9cd200aa6f9fa0bd3a96e55345e38d6655c393d069876c56a9878f790b162764'
-    },
-    {
-      name: 'David',
-      image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/d9dcf5439a49a815f01d05295b4c89f37b35132b479b771a9b94e8c93a6190c3'
     }
+    // {
+    //   name: 'Anna',
+    //   image:
+    //     'https://cdn.builder.io/api/v1/image/assets/TEMP/9cd200aa6f9fa0bd3a96e55345e38d6655c393d069876c56a9878f790b162764'
+    // },
+    // {
+    //   name: 'David',
+    //   image:
+    //     'https://cdn.builder.io/api/v1/image/assets/TEMP/d9dcf5439a49a815f01d05295b4c89f37b35132b479b771a9b94e8c93a6190c3'
+    // }
   ])
   const durations = ref<Duration[]>([
     {

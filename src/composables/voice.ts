@@ -1,6 +1,5 @@
 import { ref, watch } from 'vue'
 import { useSettingsStore, Step } from '../stores/settings'
-import { computed } from 'vue'
 import { useSpeechRecognition, useSpeechSynthesis } from '@vueuse/core'
 import { useAI } from './AI'
 import { defineStore } from 'pinia'
@@ -16,19 +15,11 @@ export const useVoice = defineStore('voice', () => {
   const speakText = ref('')
   const listen = useSpeechRecognition()
 
-  const selectedVoice = computed(() => {
-    return store.voices.find((voice) => voice.active)
-  })
-
   /**
    * Seeing as a SpeechSynthesisVoice is not a reactive object, we cannot directly pass the result of selectedVoice into { voice: selectedVoice.value.voice }.
    * Instead, the computation of the voice (which voice is active) must be done on a layer higher than assignment to useSpeechSynthesis, whose second property is:
    * UseSpeechSynthesisOptions
    */
-  const voiceConfig = computed(() => {
-    const selected = selectedVoice.value
-    return selected ? { voice: selected.voice } : undefined
-  })
 
   const defaultStatements = [
     'Please hold down the button to record your question.',
@@ -37,6 +28,12 @@ export const useVoice = defineStore('voice', () => {
     'Sorry, your browser does not support text to speech!',
     'Sorry, I am having trouble connecting to the server, please try again later.'
   ]
+  const voice = ref<SpeechSynthesisVoice>(undefined as unknown as SpeechSynthesisVoice)
+  const speak = useSpeechSynthesis(speakText, { voice })
+
+  watch(store.voices, (newValue: any) => {
+    voice.value = newValue.find((v: any) => v.active)
+  })
 
   watch(listen.result, (newValue: any) => {
     const transcript = newValue
@@ -44,7 +41,6 @@ export const useVoice = defineStore('voice', () => {
   })
 
   const playQuestion = () => {
-    const speak = useSpeechSynthesis(speakText, voiceConfig.value)
     if (!speak.isSupported) {
       alert('Sorry, your browser does not support text to speech!')
       return
@@ -57,7 +53,6 @@ export const useVoice = defineStore('voice', () => {
   }
 
   const playResponse = (playback: string) => {
-    const speak = useSpeechSynthesis(speakText, voiceConfig.value)
     if (!speak.isSupported) {
       alert('Sorry, your browser does not support text to speech!')
       return
