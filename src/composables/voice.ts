@@ -32,7 +32,7 @@ export const useVoice = defineStore('voice', () => {
   const speak = useSpeechSynthesis(speakText, { voice })
 
   watch(store.voices, (newValue: any) => {
-    voice.value = newValue.find((v: any) => v.active)
+    voice.value = newValue.find((v: any) => v.active).voice
   })
 
   watch(listen.result, (newValue: any) => {
@@ -48,8 +48,6 @@ export const useVoice = defineStore('voice', () => {
     speakText.value = `Did you ask    ${userQuery.value}`
     originalQuery.value = userQuery.value
     speak.speak()
-    console.log(store.voices)
-    console.log(speak)
   }
 
   const playResponse = (playback: string) => {
@@ -64,7 +62,6 @@ export const useVoice = defineStore('voice', () => {
   watch(
     () => store.step,
     (newValue: Step, oldValue: Step) => {
-      console.log('Step changed from ' + oldValue + ' to ' + newValue)
       if (oldValue == Step.initial && newValue == Step.recording) {
         resetUserQuery()
         listen.start()
@@ -83,15 +80,18 @@ export const useVoice = defineStore('voice', () => {
           return
         }
         report.updateAQWC(wordCount(userQuery.value))
-        AI.produceResponse(userQuery.value).then((res) => {
-          playResponse(res)
-          store.step = Step.playing
-          console.log(report.produceReport())
+        AI.produceResponse(userQuery.value).then(() => {
+          store.setStep(Step.playing)
         })
+      } else if (oldValue == Step.loading && newValue == Step.playing) {
+        playResponse(AI.response)
+        console.log(report.produceReport())
       } else if (oldValue == Step.playing && newValue == Step.initial) {
         resetUserQuery()
+        speak.stop()
+      } else {
+        speak.stop()
       }
-      // TODO: Check for the case where it changes from loading --> initial, as it is displaying output even though question was invalid.
     }
   )
 

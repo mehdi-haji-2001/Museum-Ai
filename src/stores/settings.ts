@@ -9,7 +9,7 @@ export interface Voice {
 }
 
 export interface Duration {
-  title: 'Brief answer' | 'Moderate answer' | 'Detailed answer'
+  title: string
   active: boolean
   length: number
 }
@@ -116,11 +116,6 @@ export const useSettingsStore = defineStore('settings', () => {
 
   function setStep(newStep: Step) {
     step.value = newStep
-    if (newStep === Step.loading) {
-      setTimeout(() => {
-        step.value = Step.playing
-      }, 3000)
-    }
   }
   function toggleLikeStatus(status?: LikeStatus) {
     if (status) {
