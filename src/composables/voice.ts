@@ -88,14 +88,11 @@ export const useVoice = defineStore('voice', () => {
         playResponse(AI.response)
         store.addResponse(userQuery.value, AI.response)
         console.log(report.produceReport())
-        console.log('finished playing')
       } else if (oldValue == Step.playing && newValue == Step.initial) {
         resetUserQuery()
         speak.stop()
-        console.log('cancelled')
       } else {
         speak.stop()
-        console.log('stop')
       }
     }
   )

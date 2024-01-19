@@ -31,8 +31,7 @@ export enum Step {
   recording = 'recording',
   editing = 'editing',
   loading = 'loading',
-  playing = 'playing',
-  awaiting = 'awaiting'
+  playing = 'playing'
 }
 
 // TODO: Voices should be made with new SpeechSynthesisVoice() or speechSynthesis.getVoices()
