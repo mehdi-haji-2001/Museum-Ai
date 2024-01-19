@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/stores/settings'
-
 const store = useSettingsStore()
-
-console.log(store.responses)
 </script>
 
 <template>
@@ -13,7 +10,7 @@ console.log(store.responses)
   </div>
   <div class="flex flex-col items-center">
     <span
-      class="pt-1 pb-3 px-2 border-2 rounded-3xl mt-4 text-center max-h-32 overflow-y-scroll text-black"
+      class="pt-1 pb-3 px-2 border-2 rounded-3xl mt-4 text-center max-h-32 overflow-y-scroll text-black w-[500px]"
       v-bind:key="index"
       v-for="(r, index) in store.responses"
     >

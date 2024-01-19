@@ -12,6 +12,7 @@ import { useVoice } from '@/composables/voice'
 import { useAI } from '@/composables/AI'
 import { watch } from 'vue'
 import { useReportStore } from '@/stores/report'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const store = useSettingsStore()
 const report = useReportStore()
@@ -45,6 +46,12 @@ const copy = () => {
     .writeText(`${voice.userQuery}\n${AI.response}`)
     .then(() => alert('Copied to clipboard!'))
 }
+
+onBeforeRouteLeave((to) => {
+  if (to.path === '/responses') {
+    report.incrementTAPR()
+  }
+})
 </script>
 
 <template>
@@ -100,5 +107,11 @@ const copy = () => {
 
     <MicButton v-if="store.step === Step.initial || store.step === Step.recording" class="mb-6" />
     <ConfirmButton v-if="store.step === Step.editing" class="mb-6" />
+    <button
+      class="bg-gray-200 rounded-full p-4 hover:bg-orange-400 hover:font-bold duration-200 m-6 p-6"
+      @click="console.log(report.produceReport())"
+    >
+      Generate Report
+    </button>
   </div>
 </template>
