@@ -50,7 +50,7 @@ export const useVoice = defineStore('voice', () => {
     speak.speak()
   }
 
-  const playResponse = (playback: string) => {
+  const playResponse = (playback: string = `${AI.response}`) => {
     if (!speak.isSupported) {
       alert('Sorry, your browser does not support text to speech!')
       return
@@ -82,15 +82,20 @@ export const useVoice = defineStore('voice', () => {
         report.updateAQWC(wordCount(userQuery.value))
         AI.produceResponse(userQuery.value).then(() => {
           store.setStep(Step.playing)
+          console.log(`AI response: ${AI.response}`)
         })
       } else if (oldValue == Step.loading && newValue == Step.playing) {
         playResponse(AI.response)
+        store.addResponse(userQuery.value, AI.response)
         console.log(report.produceReport())
+        console.log('finished playing')
       } else if (oldValue == Step.playing && newValue == Step.initial) {
         resetUserQuery()
         speak.stop()
+        console.log('cancelled')
       } else {
         speak.stop()
+        console.log('stop')
       }
     }
   )
@@ -114,6 +119,7 @@ export const useVoice = defineStore('voice', () => {
 
   return {
     userQuery,
-    resetUserQuery
+    resetUserQuery,
+    playResponse
   }
 })

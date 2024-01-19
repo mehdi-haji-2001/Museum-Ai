@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import type { PastResponse } from '@/types/PastResponse'
 
 export interface Voice {
   name: string
@@ -30,12 +31,13 @@ export enum Step {
   recording = 'recording',
   editing = 'editing',
   loading = 'loading',
-  playing = 'playing'
+  playing = 'playing',
+  awaiting = 'awaiting'
 }
 
 // TODO: Voices should be made with new SpeechSynthesisVoice() or speechSynthesis.getVoices()
 export const useSettingsStore = defineStore('settings', () => {
-  // const playbackVoices = ref<SpeechSynthesisVoice[]>([])
+  const responses = ref<PastResponse[]>([])
 
   // When voices are loaded into the browser, we collect them.
   window.speechSynthesis.onvoiceschanged = () => {
@@ -59,16 +61,6 @@ export const useSettingsStore = defineStore('settings', () => {
       image:
         'https://cdn.builder.io/api/v1/image/assets/TEMP/53078945d32f8debb00124f30e994d230cbb26d7305b8221923ee1bb7cda7d70'
     }
-    // {
-    //   name: 'Anna',
-    //   image:
-    //     'https://cdn.builder.io/api/v1/image/assets/TEMP/9cd200aa6f9fa0bd3a96e55345e38d6655c393d069876c56a9878f790b162764'
-    // },
-    // {
-    //   name: 'David',
-    //   image:
-    //     'https://cdn.builder.io/api/v1/image/assets/TEMP/d9dcf5439a49a815f01d05295b4c89f37b35132b479b771a9b94e8c93a6190c3'
-    // }
   ])
   const durations = ref<Duration[]>([
     {
@@ -124,19 +116,6 @@ export const useSettingsStore = defineStore('settings', () => {
       likeStatus.value = LikeStatus.neutral
     }
   }
-  // function toggleRecording(active?: boolean) {
-  //   if (isRecording.value) {
-
-  //   }
-  //   isRecording.value = active ?? !isRecording.value
-  //   if (isRecording.value) setStep(Step.recording)
-  // }
-  // function togglePlaying(active?: boolean) {
-  //   isPlaying.value = active ?? !isPlaying.value
-  // }
-  // function toggleLoading(active?: boolean) {
-  //   isLoading.value = active ?? !isLoading.value
-  // }
   function setVoice(voice: Voice) {
     isSettingsModified.value = true
     voices.value = voices.value.map((v) => {
@@ -158,6 +137,12 @@ export const useSettingsStore = defineStore('settings', () => {
       return g
     })
   }
+  function addResponse(question: string, answer: string) {
+    responses.value.push({
+      question,
+      answer
+    })
+  }
 
   return {
     voices,
@@ -167,16 +152,15 @@ export const useSettingsStore = defineStore('settings', () => {
     groupSizes,
     setGroupSize,
     isRecording,
-    // toggleRecording,
     isPlaying,
-    // togglePlaying,
     isLoading,
-    // toggleLoading,
     toggleLikeStatus,
     isLiked,
     isDisliked,
     step,
     setStep,
-    isSettingsModified
+    isSettingsModified,
+    responses,
+    addResponse
   }
 })

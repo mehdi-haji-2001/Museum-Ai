@@ -7,6 +7,7 @@ import VoiceAnimation from '@/components/VoiceAnimation.vue'
 import LikeBar from '@/components/LikeBar.vue'
 import IconStop from '@/components/icons/IconStop.vue'
 import IconCopy from '@/components/icons/IconCopy.vue'
+import IconRepeat from '@/components/icons/IconRepeat.vue'
 import { useVoice } from '@/composables/voice'
 import { useAI } from '@/composables/AI'
 import { watch } from 'vue'
@@ -48,7 +49,10 @@ const copy = () => {
 
 <template>
   <div class="flex flex-col h-full p-6">
-    <RouterLink to="/settings" class="text-2xl font-bold self-start">Setting</RouterLink>
+    <div class="flex justify-between">
+      <RouterLink to="/settings" class="text-2xl font-bold self-start">Setting</RouterLink>
+      <RouterLink to="/responses" class="text-2xl font-bold self-start">Past Responses</RouterLink>
+    </div>
 
     <div class="pt-10">
       <TheSlogan />
@@ -76,8 +80,13 @@ const copy = () => {
     <template v-else-if="store.step === Step.playing">
       <div class="flex flex-col items-center">
         <VoiceAnimation class="mt-10" :scale="3" />
-        <div class="mx-4 my-4" @click="copy()">
-          <IconCopy />
+        <div class="flex items-center">
+          <div class="mx-4 my-3" @click="copy()">
+            <IconCopy />
+          </div>
+          <div class="mx-4 my-3 pt-4" @click="voice.playResponse()">
+            <IconRepeat />
+          </div>
         </div>
         <span class="p-4 border-2 rounded-3xl mt-4 text-center max-h-32 overflow-y-scroll">
           {{ AI.response }}
