@@ -82,12 +82,10 @@ export const useVoice = defineStore('voice', () => {
         report.updateAQWC(wordCount(userQuery.value))
         AI.produceResponse(userQuery.value).then(() => {
           store.setStep(Step.playing)
-          console.log(`AI response: ${AI.response}`)
         })
       } else if (oldValue == Step.loading && newValue == Step.playing) {
         playResponse(AI.response)
         store.addResponse(userQuery.value, AI.response)
-        console.log(report.produceReport())
       } else if (oldValue == Step.playing && newValue == Step.initial) {
         resetUserQuery()
         speak.stop()
