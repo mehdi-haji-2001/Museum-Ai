@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSettingsStore, Step } from '@/stores/settings'
+import { useSettingsStore } from '@/stores/settings'
 import { useClipboard } from '@vueuse/core'
 import { useReportStore } from '@/stores/report'
 import { LikeStatus } from '@/stores/settings'
