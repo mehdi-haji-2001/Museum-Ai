@@ -18,7 +18,6 @@ export const useAI = defineStore('AI', () => {
     const duration = store.durations.find((i) => i.active)?.length || store.durations[0].length
     // Open the txt file from ./../assets/transcript.txt
     const transcript = await (await fetch('/transcript.txt')).text()
-    console.log(transcript)
 
     const systemCommands = [
       'Your Role:',
