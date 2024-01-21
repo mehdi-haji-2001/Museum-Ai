@@ -15,7 +15,7 @@ const showReport = () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center p-4 pt-5 h-full">
+  <div class="flex flex-col items-center px-5 py-6 h-full overflow-scroll">
     <RouterLink to="/home" class="text-xl font-bold self-start">Back</RouterLink>
     <template v-if="store.responses.length">
       <div
@@ -48,7 +48,6 @@ const showReport = () => {
       </div>
     </template>
     <button
-      v-if="store.step === Step.initial"
       class="fixed bottom-4 right-4 bg-gray-200 rounded-full leading-none p-4"
       @click="showReport"
     >

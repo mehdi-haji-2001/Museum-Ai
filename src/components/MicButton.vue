@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import IconMic from '@/components/icons/IconMic.vue'
 import { useSettingsStore, Step } from '@/stores/settings'
 import { useVoice } from '@/composables/voice'
 import { ref } from 'vue'
@@ -28,14 +27,16 @@ const stopRecording = () => {
 <template>
   <div class="mt-auto flex flex-col justify-center items-center gap-5">
     <div
-      class="bg-green-500 rounded-full p-6"
+      class="bg-green-500 rounded-full p-6 leading-none"
       :class="isRecording ? 'scale-150' : ''"
       @mousedown="startRecording"
       @touchstart="startRecording"
       @mouseup="stopRecording"
       @touchend="stopRecording"
     >
-      <IconMic :class="isRecording ? 'fill-[#a1e2b1]' : 'fill-white'" />
+      <span class="material-icons md-48" :class="isRecording ? 'text-[#a1e2b1]' : 'text-white'">
+        mic
+      </span>
     </div>
     <div>{{ isRecording ? '&nbsp;' : 'Hold the button to start' }}</div>
   </div>
