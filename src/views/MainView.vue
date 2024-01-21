@@ -5,7 +5,6 @@ import ConfirmButton from '@/components/ConfirmButton.vue'
 import { useSettingsStore, Step } from '@/stores/settings'
 import VoiceAnimation from '@/components/VoiceAnimation.vue'
 import LikeBar from '@/components/LikeBar.vue'
-import IconStop from '@/components/icons/IconStop.vue'
 import IconCopy from '@/components/icons/IconCopy.vue'
 import IconRepeat from '@/components/icons/IconRepeat.vue'
 import { useVoice } from '@/composables/voice'
@@ -13,11 +12,13 @@ import { useAI } from '@/composables/AI'
 import { watch } from 'vue'
 import { useReportStore } from '@/stores/report'
 import { onBeforeRouteLeave } from 'vue-router'
+import { useClipboard } from '@vueuse/core'
 
 const store = useSettingsStore()
 const report = useReportStore()
 const voice = useVoice()
 const AI = useAI()
+const { copy } = useClipboard()
 
 // TODO: Watcher for change in UserQuery in View to stream text to textbox.
 
@@ -41,14 +42,12 @@ const endExchange = () => {
   store.toggleLikeStatus()
 }
 
-const copy = () => {
-  navigator.clipboard
-    .writeText(`${voice.userQuery}\n${AI.response}`)
-    .then(() => alert('Copied to clipboard!'))
+const copyResponse = () => {
+  copy(`${voice.userQuery}\n${AI.response}`).then(() => alert('Copied to clipboard!'))
 }
 
 onBeforeRouteLeave((to) => {
-  if (to.path === '/responses') {
+  if (to.path === '/history') {
     report.incrementTAPR()
   }
 })
@@ -57,8 +56,8 @@ onBeforeRouteLeave((to) => {
 <template>
   <div class="flex flex-col h-full p-6">
     <div class="flex justify-between">
-      <RouterLink to="/settings" class="text-2xl font-bold self-start">Setting</RouterLink>
-      <RouterLink to="/responses" class="text-2xl font-bold self-start">Past Responses</RouterLink>
+      <RouterLink to="/settings" class="text-xl font-bold self-start">Settings</RouterLink>
+      <RouterLink to="/history" class="text-xl font-bold self-start">History</RouterLink>
     </div>
 
     <div class="pt-10">
@@ -85,33 +84,29 @@ onBeforeRouteLeave((to) => {
     </template>
 
     <template v-else-if="store.step === Step.playing">
-      <div class="flex flex-col items-center">
-        <VoiceAnimation class="mt-10" :scale="3" />
-        <div class="flex items-center">
-          <div class="mx-4 my-3" @click="copy()">
-            <IconCopy />
-          </div>
-          <div class="mx-4 my-3 pt-4" @click="voice.playResponse()">
-            <IconRepeat />
+      <div class="flex flex-col items-center flex-1">
+        <VoiceAnimation class="mt-4" :scale="2" />
+        <div class="flex flex-col gap-1">
+          <span class="p-4 border-2 rounded-xl mt-4 text-center max-h-52 overflow-y-scroll">
+            {{ AI.response }}
+          </span>
+          <div class="flex justify-end gap-2">
+            <div class="leading-none p-2" @click="copyResponse()">
+              <span class="material-icons md-18">content_copy</span>
+            </div>
+            <div class="leading-none p-2" @click="voice.playResponse()">
+              <span class="material-icons md-18">replay</span>
+            </div>
           </div>
         </div>
-        <span class="p-4 border-2 rounded-3xl mt-4 text-center max-h-32 overflow-y-scroll">
-          {{ AI.response }}
-        </span>
         <LikeBar class="mt-4" />
-        <div class="bg-green-500 rounded-full p-7 mt-8" @click="endExchange">
-          <IconStop />
+        <div class="bg-gray-200 leading-none rounded-full p-7 mt-auto" @click="endExchange">
+          <span class="material-icons">home</span>
         </div>
       </div>
     </template>
 
     <MicButton v-if="store.step === Step.initial || store.step === Step.recording" class="mb-6" />
     <ConfirmButton v-if="store.step === Step.editing" class="mb-6" />
-    <button
-      class="bg-gray-200 rounded-full p-4 hover:bg-orange-400 hover:font-bold duration-200 m-6 p-6"
-      @click="console.log(report.produceReport())"
-    >
-      Generate Report
-    </button>
   </div>
 </template>

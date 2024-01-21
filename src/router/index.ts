@@ -2,18 +2,18 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainView from '../views/MainView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import WelcomeView from '@/views/WelcomeView.vue'
-import ResponsesView from '@/views/ResponsesView.vue'
+import HistoryView from '@/views/HistoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/welcome',
+      path: '/',
       name: 'welcome',
       component: WelcomeView
     },
     {
-      path: '/',
+      path: '/home',
       name: 'main',
       component: MainView
     },
@@ -23,9 +23,9 @@ const router = createRouter({
       component: SettingsView
     },
     {
-      path: '/responses',
-      name: 'responses',
-      component: ResponsesView
+      path: '/history',
+      name: 'history',
+      component: HistoryView
     }
   ]
 })

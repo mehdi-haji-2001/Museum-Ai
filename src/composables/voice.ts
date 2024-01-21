@@ -45,7 +45,7 @@ export const useVoice = defineStore('voice', () => {
       alert('Sorry, your browser does not support text to speech!')
       return
     }
-    speakText.value = `Did you ask    ${userQuery.value}`
+    speakText.value = `Did you say ${userQuery.value}`
     originalQuery.value = userQuery.value
     speak.speak()
   }
@@ -115,6 +115,8 @@ export const useVoice = defineStore('voice', () => {
   return {
     userQuery,
     resetUserQuery,
-    playResponse
+    playResponse,
+    defaultStatements,
+    speak
   }
 })

@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PastResponse } from '@/types/PastResponse'
 
@@ -37,30 +37,30 @@ export enum Step {
 // TODO: Voices should be made with new SpeechSynthesisVoice() or speechSynthesis.getVoices()
 export const useSettingsStore = defineStore('settings', () => {
   const responses = ref<PastResponse[]>([])
-
   // When voices are loaded into the browser, we collect them.
-  window.speechSynthesis.onvoiceschanged = () => {
-    const _voices = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith('en'))
-    const female = _voices.filter((v) => v.name.includes('Female'))[0] || undefined
-    const male = _voices.filter((v) => v.name.includes('Male'))[0] || undefined
-    voices.value[0].voice = female
-    voices.value[1].voice = male
+  const loadVoices = () => {
+    const _voices = window.speechSynthesis
+      .getVoices()
+      .filter((v) => v.lang.toLowerCase().includes('en-us'))
+    _voices.forEach((v) => {
+      addToBugReport('Voice', {
+        name: v.name,
+        lang: v.lang,
+        voiceURI: v.voiceURI,
+        default: v.default
+      })
+      voices.value.push({
+        name: v.name,
+        image:
+          'https://cdn.builder.io/api/v1/image/assets/TEMP/53078945d32f8debb00124f30e994d230cbb26d7305b8221923ee1bb7cda7d70',
+        voice: v,
+        active: false
+      })
+    })
+    voices.value[0].active = true
   }
 
-  const voices = ref<Voice[]>([
-    {
-      active: true,
-      name: 'Julia',
-      image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/9422fc76432fd1e0b6c5fe66e55f1e26b389f433de6d6395668f1809fc90938f'
-    },
-    {
-      active: false,
-      name: 'Alex',
-      image:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/53078945d32f8debb00124f30e994d230cbb26d7305b8221923ee1bb7cda7d70'
-    }
-  ])
+  const voices = ref<Voice[]>([])
   const durations = ref<Duration[]>([
     {
       title: 'Brief answer',
@@ -96,6 +96,8 @@ export const useSettingsStore = defineStore('settings', () => {
       size: 4
     }
   ])
+  const bugReport = ref('')
+
   const step = ref<Step>(Step.initial)
   const isRecording = computed(() => step.value === Step.recording)
   const isPlaying = computed(() => step.value === Step.playing)
@@ -105,12 +107,19 @@ export const useSettingsStore = defineStore('settings', () => {
   const isDisliked = computed(() => likeStatus.value === LikeStatus.disliked)
   const isSettingsModified = ref(false)
 
+  function addToBugReport(title: string, report: any) {
+    bugReport.value += `\n\n${title}:\n${JSON.stringify(report, null, 2)}`
+  }
+  function getBugReport() {
+    return bugReport.value
+  }
   function setStep(newStep: Step) {
     step.value = newStep
   }
   function toggleLikeStatus(status?: LikeStatus) {
     if (status) {
       likeStatus.value = likeStatus.value === status ? LikeStatus.neutral : status
+      responses.value[responses.value.length - 1].likeStatus = likeStatus.value
     } else {
       likeStatus.value = LikeStatus.neutral
     }
@@ -160,6 +169,10 @@ export const useSettingsStore = defineStore('settings', () => {
     setStep,
     isSettingsModified,
     responses,
-    addResponse
+    addResponse,
+    bugReport,
+    addToBugReport,
+    getBugReport,
+    loadVoices
   }
 })

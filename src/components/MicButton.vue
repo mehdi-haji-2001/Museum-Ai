@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import IconMic from '@/components/icons/IconMic.vue'
 import { useSettingsStore, Step } from '@/stores/settings'
+import { useVoice } from '@/composables/voice'
 import { ref } from 'vue'
 
 const store = useSettingsStore()
+const voice = useVoice()
 
 const isRecording = ref(false)
 
@@ -14,6 +16,10 @@ const startRecording = () => {
 const stopRecording = () => {
   isRecording.value = false
   setTimeout(() => {
+    if (voice.defaultStatements.includes(voice.userQuery)) {
+      store.setStep(Step.initial)
+      return
+    }
     store.setStep(Step.editing)
   }, 300)
 }

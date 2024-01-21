@@ -12,7 +12,7 @@ import TheSlogan from '@/components/TheSlogan.vue'
     <TheDuration class="mt-4" />
     <TheGroupSize class="mt-4" />
     <RouterLink
-      to="/"
+      to="/home"
       class="text-white text-center text-base whitespace-nowrap justify-center items-stretch border shadow-sm bg-green-500 mt-14 px-4 py-4 rounded-lg border-solid border-green-600"
     >
       Save Your Assistant
